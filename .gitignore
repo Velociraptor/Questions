@@ -1,0 +1,4 @@
+venv
+flask
+*.pyc
+virtualenv.py
