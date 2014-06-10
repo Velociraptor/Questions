@@ -1,14 +1,34 @@
 #!flask/bin/python
 
 from flask import Flask, render_template, send_from_directory
+from mongoengine import connect
+from flask.ext.mongoengine import MongoEngine
+#from models import Question
+import models
 
 app = Flask(__name__)
+#app.config["MONGODB_SETTINGS"] = {'DB':"questions_app"}
+app.config["SECRET_KEY"] = "SUUUUPERSECRET"
+DB_NAME = 'questioning'
+DB_USERNAME = 'questioner'
+DB_PASSWORD = 'ihaveaquestion'
+DB_HOST_ADDRESS = 'ds043477.mongolab.com:43477/questioning'
+
+app.config["MONGODB_DB"] = DB_NAME
+connect(DB_NAME, host='mongodb://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_HOST_ADDRESS)
+
+db = MongoEngine(app)
+#db.init_app(app)
 
 @app.route('/')
 @app.route('/index')
 def index():
     text = 'Whooo I am a webpage!!!  Here is a question, and an answer box, and a nav bar.'
-    return render_template('index.html', text = text)
+    q2 = models.Question(text='Where am I?')
+    q2.save()
+    questions = models.Question.objects
+    print 'questions', questions
+    return render_template('index.html', text = text, questions = questions)
 
 @app.route('/prompt')
 def prompt():
