@@ -7,12 +7,6 @@ from flask.ext.mongoengine import MongoEngine
 import models
 
 app = Flask(__name__)
-#app.config["MONGODB_SETTINGS"] = {'DB':"questions_app"}
-app.config["SECRET_KEY"] = "SUUUUPERSECRET"
-DB_NAME = 'questioning'
-DB_USERNAME = 'questioner'
-DB_PASSWORD = 'ihaveaquestion'
-DB_HOST_ADDRESS = 'ds043477.mongolab.com:43477/questioning'
 
 app.config["MONGODB_DB"] = DB_NAME
 connect(DB_NAME, host='mongodb://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_HOST_ADDRESS)
