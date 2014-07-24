@@ -1,28 +1,35 @@
 #!flask/bin/python
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 from mongoengine import connect
 from flask.ext.mongoengine import MongoEngine
-#from models import Question
 import models
+import config
 
 app = Flask(__name__)
 
-app.config["MONGODB_DB"] = DB_NAME
-connect(DB_NAME, host='mongodb://' + DB_USERNAME + ':' + DB_PASSWORD + '@' + DB_HOST_ADDRESS)
+app.config["MONGODB_DB"] = config.DB_NAME
+connect(config.DB_NAME, host='mongodb://' + config.DB_USERNAME + ':' + config.DB_PASSWORD + '@' + config.DB_HOST_ADDRESS)
 
 db = MongoEngine(app)
-#db.init_app(app)
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET','POST'])
+@app.route('/index', methods=['GET','POST'])
 def index():
     text = 'Whooo I am a webpage!!!  Here is a question, and an answer box, and a nav bar.'
-    q2 = models.Question(text='Where am I?')
-    q2.save()
-    questions = models.Question.objects
-    print 'questions', questions
-    return render_template('index.html', text = text, questions = questions)
+    if request.method == 'POST':
+        print 'post'
+        answer=request.form['ans']
+        a2 = models.Answer(body=answer)
+        a2.save()
+    # q2 = models.Question(text='Where am I?')
+    # q2.save()
+    question = list(models.Question.objects)[-1]
+    print 'question', question, list(question)
+    answers = models.Answer.objects
+    print 'answers', answers
+    return render_template('index.html', text = text, 
+        question = question, answers = answers)
 
 @app.route('/prompt')
 def prompt():

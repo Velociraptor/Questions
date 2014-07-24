@@ -30,7 +30,16 @@
           {{text}}
         </div>
         <div class="content">
-          {{questions}}
+          Today's Question is:
+          {{question}}
+        </div>
+        <form name="answer" action="" method="post">
+          Answer: <input type="text" name="ans">
+          <input type="submit" value="Submit">
+        </form>
+        <div class="content">
+          Today's Answers are:
+          {{answers}}
         </div>
         <hr>
         <footer class="footer">
