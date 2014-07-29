@@ -5,34 +5,28 @@ from routes import db
 class Question(db.Document):
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     text = db.StringField(required=True)
-    #comments = db.ListField(db.DocumentField('Answer'))
-
-    #def get_absolute_url(self):
-    #    return url_for('question', kwargs={"slug": self.slug})
+    #comments = db.ListField(db.ReferenceField(Comment))
 
     def __unicode__(self):
         return self.text
 
     meta = {
         'allow_inheritance': True,
-        'indexes': ['-created_at'], #slug
+        'indexes': ['-created_at'],
         'ordering': ['-created_at']
     }
 
 class Answer(db.Document):
-    #question = db.Question()
+    question = db.ReferenceField(Question)
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     body = db.StringField(required=True)
-
-    #def get_absolute_url(self):
-    #    return url_for('answer', kwargs={"slug": self.slug})
 
     def __unicode__(self):
         return self.body
 
     meta = {
         'allow_inheritance': True,
-        'indexes': ['-created_at'], #slug
+        'indexes': ['-created_at'],
         'ordering': ['-created_at']
     }
 

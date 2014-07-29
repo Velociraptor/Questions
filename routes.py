@@ -17,16 +17,13 @@ db = MongoEngine(app)
 @app.route('/index', methods=['GET','POST'])
 def index():
     text = 'Whooo I am a webpage!!!  Here is a question, and an answer box, and a nav bar.'
+    question = list(models.Question.objects)[0]
     if request.method == 'POST':
-        print 'post'
         answer=request.form['ans']
-        a2 = models.Answer(body=answer)
+        a2 = models.Answer(body=answer, question=question)
         a2.save()
-    # q2 = models.Question(text='Where am I?')
-    # q2.save()
-    question = list(models.Question.objects)[-1]
-    print 'question', question, list(question)
-    answers = models.Answer.objects
+    
+    answers = models.Answer.objects(question=question)
     print 'answers', answers
     return render_template('index.html', text = text, 
         question = question, answers = answers)
@@ -46,10 +43,25 @@ def answer():
     text = 'This is one specific answer in detail'
     return render_template('index.html', text = text)
 
+@app.route('/previous', methods=['GET'])
+def previous():
+    prev_qs = models.Question.objects()
+    return render_template('previous.html', questions = prev_qs)
+
 @app.route('/question')
-def question():
+def question(question):
     text = 'This is an old question and its answers and stuff'
+    answers = models.Answer.objects(question=question)
     return render_template('index.html', text = text)
+
+@app.route('/admin', methods=['GET','POST'])
+def admin():
+    if request.method == 'POST':
+        new_question=request.form['question']
+        q = models.Question(text=new_question)
+        q.save()
+    questions = list(models.Question.objects)[0:10]
+    return render_template('admin.html', questions = questions)
 
 if __name__ == '__main__':
     app.run()
