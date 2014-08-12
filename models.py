@@ -30,6 +30,20 @@ class Answer(db.Document):
         'ordering': ['-created_at']
     }
 
+class User(db.Document):
+    created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
+    uname = db.StringField(required=True)
+    #uid = db.IntField(required=True)
+    favorites = db.ListField(db.ReferenceField(Answer))
+
+    def __unicode__(self):
+        return self.uname
+
+    meta = {
+        'allow_inheritance': True,
+        'indexes': ['-created_at'],
+        'ordering': ['-created_at']
+    }
 
 class Comment(db.EmbeddedDocument):
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
