@@ -3,17 +3,23 @@
 from flask import Flask, render_template, send_from_directory, request
 from mongoengine import connect
 from flask.ext.mongoengine import MongoEngine
+from flask.ext.social import Social, MongoEngineConnectionDatastore
+from flask.ext.login import LoginManager
 import models
 import config
 
 app = Flask(__name__)
 
 app.config["MONGODB_DB"] = config.DB_NAME
+app.config["SOCIAL_TWITTER"] = {
+    'consumer_key': config.twitter_key,
+    'consumer_secret': config.twitter_secret
+}
 connect(config.DB_NAME, host='mongodb://' + config.DB_USERNAME + ':' + config.DB_PASSWORD + '@' + config.DB_HOST_ADDRESS)
 
 db = MongoEngine(app)
+#Social(app, MongoEngineConnectionDatastore(db, models.Connection))
 
-from flask.ext.login import LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -25,7 +31,9 @@ def get_answers(question):
 
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET','POST'])
+#@login_required
 def index():
+    twitter_conn=social.twitter.get_connection()
     text = 'Whooo I am a webpage!!!  Here is a question, and an answer box, and a nav bar.'
     question = get_current_question()
     if request.method == 'POST':
@@ -52,7 +60,7 @@ def login():
         user.save()
     # current_user = the person who just logged in
 
-    text = 'Welcome %s. You have succesffully logged in!' %username
+    text = 'Welcome %s. You have successfully logged in!' %username
     question = get_current_question()
     answers = get_answers(question)
     return render_template('index.html', text = text, 

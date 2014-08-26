@@ -45,6 +45,14 @@ class User(db.Document):
         'ordering': ['-created_at']
     }
 
+class Connection(db.Document):
+    user = db.ReferenceField(User)
+    provider_id = db.StringField()
+    provider_user_id = db.StringField()
+    access_token = db.StringField()
+    secret = db.StringField()
+    display_name = db.StringField()
+
 class Comment(db.EmbeddedDocument):
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     body = db.StringField(verbose_name="Comment", required=True)
